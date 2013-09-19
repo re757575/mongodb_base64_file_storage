@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Examples</title>
+    <script type="text/javascript" src="javascripts/jquery-2.0.3.min.js"></script>
+
+</head>
+
+<body>
+    <form method="post" enctype="multipart/form-data" action="/article">
+        <label for="author">Author:</label>
+        <input type="text" name="author" />
+        <br/>
+        <label for="content">Content:</label>
+        <br/>
+        <textarea rows="5" cols="100" name="content"></textarea>
+        <br/>
+        <label for="image">Image(optional):</label>
+        <input type="file" name="myfile" />
+        <br/>
+        <input type="submit" />
+    </form>
+
+    <a href="/articles">show collections</a>
+    <br>
+    <br>
+    <button id="load">載入影片</button>
+    <br>
+    <br>
+    <div id="mian_player"></div>
+
+
+    <script type="text/javascript">
+    var all = 0;
+    $("#load").click(function() {
+        loadPlayer();
+    });
+
+    function loadPlayer() {
+        $("#mian_player").html("<video id='player' controls />");
+        loadFile();
+    }
+
+    function loadFile() {
+
+        var _file = localStorage.getItem("file");
+        if (!_file) {
+            $.ajax({
+                url: '/article/523a83a9fb41852033000001/file',
+                dataType: "json",
+                success: function(result) {
+                    var file = "";
+                    for (var n = 0; n < result.data.length; n++)
+                        file += result.data[n].value;
+                    $("#player").attr("src", 'data:video/mp4;base64,' + file);
+                }
+            });
+        } else {
+            $("#player").attr("src", 'data:video/mp4;base64,' + _file);
+
+        }
+        $("#player").get(0).play();
+    }
+
+    function toObject(arr) {
+        var rv = {};
+        for (var i = 0; i < arr.length; ++i)
+            rv[i] = arr[i];
+        return rv;
+    }
+    </script>
+
+</body>
+
+</html>
